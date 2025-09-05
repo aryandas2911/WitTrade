@@ -1,3 +1,7 @@
+import { FaTwitter } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
+
 function Footer() {
   return (
     <footer className="w-full bg-gray-50 border-t mt-12">
@@ -17,7 +21,7 @@ function Footer() {
             <li><a href="/" className="hover:text-blue-600">Home</a></li>
             <li><a href="/startup-auth" className="hover:text-blue-600">Startups</a></li>
             <li><a href="/learner-auth" className="hover:text-blue-600">Learners</a></li>
-            <li><a href="#" className="hover:text-blue-600">Applications</a></li>
+            <li><a href="/about" className="hover:text-blue-600">About</a></li>
           </ul>
         </div>
 
@@ -34,9 +38,9 @@ function Footer() {
         <div>
           <h3 className="text-md font-semibold text-gray-800 mb-3">Follow Us</h3>
           <div className="flex gap-4 text-gray-600 text-xl">
-            <a href="#" className="hover:text-blue-600">🐦</a>
-            <a href="#" className="hover:text-blue-600">🔗</a>
-            <a href="#" className="hover:text-blue-600">💻</a>
+            <a href="#" className="hover:text-blue-600"><FaTwitter /></a>
+            <a href="#" className="hover:text-blue-600"><FaGithub /></a>
+            <a href="#" className="hover:text-blue-600"><FaInstagram /></a>
           </div>
         </div>
       </div>

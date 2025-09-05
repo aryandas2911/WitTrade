@@ -18,8 +18,8 @@ function Navbar() {
         <a href="/learner-auth" className="text-gray-700 hover:text-blue-600 transition">
           Learner
         </a>
-        <a href="#" className="text-gray-700 hover:text-blue-600 transition">
-          Applications
+        <a href="/about" className="text-gray-700 hover:text-blue-600 transition">
+          About
         </a>
       </div>
 

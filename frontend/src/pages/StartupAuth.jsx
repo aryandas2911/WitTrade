@@ -32,7 +32,6 @@ function StartupAuth() {
   return (
     <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gradient-to-br from-blue-50 to-gray-100 px-4 pt-10">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
-        {/* Header */}
         <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center">
           {isSignup ? "Startup Registration" : "Welcome Back"}
         </h2>
@@ -42,7 +41,6 @@ function StartupAuth() {
             : "Sign in to manage your dashboard and projects."}
         </p>
 
-        {/* Fixed height container for forms */}
         <div className="relative min-h-[420px]">
           <style>
             {`
@@ -50,11 +48,10 @@ function StartupAuth() {
                 from { opacity: 0; transform: translateY(12px); }
                 to { opacity: 1; transform: translateY(0); }
               }
-              .fade-in-up { animation: fadeInUp 0.35s ease-out forwards; }
+              .fade-in-up { animation: fadeInUp 0.25s ease-out forwards; }
             `}
           </style>
 
-          {/* Signup Form */}
           {isSignup && (
             <form
               onSubmit={handleSubmit}
@@ -124,7 +121,6 @@ function StartupAuth() {
             </form>
           )}
 
-          {/* Signin Form */}
           {!isSignup && (
             <form
               onSubmit={handleSubmit}
@@ -155,7 +151,6 @@ function StartupAuth() {
           )}
         </div>
 
-        {/* Toggle */}
         <p className="text-sm text-gray-600 text-center mt-6">
           {isSignup ? (
             <>
