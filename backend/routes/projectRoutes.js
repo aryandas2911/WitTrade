@@ -137,4 +137,28 @@ router.post("/:id/withdraw", protect, async (req, res) => {
   }
 });
 
+router.get("/all", async (req, res) => {
+  try {
+    const { skill, companyName, industry } = req.query;
+
+    let filters = {};
+
+    if (skill) {
+      filters.requiredSkills = { $in: [skill] };
+    }
+    if (companyName) {
+      filters.companyName = { $regex: companyName, $options: "i" };
+    }
+
+    // Optional: If you want industry filter, populate startup profile
+    let query = Project.find(filters);
+
+    const projects = await query.sort({ createdAt: -1 });
+    res.json(projects);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 export default router;

@@ -7,6 +7,8 @@ import StartupAuth from "./pages/StartupAuth";
 import About from "./pages/About";
 import LearnerDashboard from "./pages/LearnerDashboard";
 import StartupDashboard from "./pages/StarterDashboard";
+import ExploreProjects from "./pages/ExploreProjects";
+
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
           <Route path="/about" element={<About/>} />
           <Route path="/dashboard" element={<LearnerDashboard />} />
           <Route path="/startup-dashboard" element={<StartupDashboard />} />
+          <Route path="/explore" element={<ExploreProjects />} />
         </Routes>
       <Footer/>
       </Router>
