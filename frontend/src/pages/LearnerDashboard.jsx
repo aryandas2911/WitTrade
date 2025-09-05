@@ -4,29 +4,30 @@ import axios from "axios";
 
 function LearnerDashboard() {
   const [user, setUser] = useState(null);
+  const [activeTab, setActiveTab] = useState("profile");
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    // If no token, send back to login page
     if (!token) {
       navigate("/learner-auth");
       return;
     }
 
-    // Fetch learner profile
     const fetchProfile = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         setUser(res.data.user);
+        setFormData(res.data.user); // preload form
       } catch (err) {
-        console.error(err);
+        console.error("Profile fetch failed:", err);
         localStorage.removeItem("token");
-        navigate("/learner-auth"); // redirect if token is invalid
+        navigate("/learner-auth");
       }
     };
 
@@ -35,7 +36,55 @@ function LearnerDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/"); // back to homepage
+    navigate("/");
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "skills") {
+      setFormData({
+        ...formData,
+        learnerProfile: {
+          ...formData.learnerProfile,
+          skills: value.split(",").map((s) => s.trim()),
+        },
+      });
+    } else if (["education", "portfolio"].includes(name)) {
+      setFormData({
+        ...formData,
+        learnerProfile: {
+          ...formData.learnerProfile,
+          [name]: value,
+        },
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(
+        "http://localhost:5000/api/users/profile",
+        {
+          name: formData.name,
+          education: formData.learnerProfile?.education,
+          skills: formData.learnerProfile?.skills,
+          portfolio: formData.learnerProfile?.portfolio,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setUser(res.data.user);
+      setIsEditing(false);
+      alert("✅ Profile updated successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to update profile");
+    }
   };
 
   if (!user) {
@@ -47,44 +96,164 @@ function LearnerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-blue-600">
-          Welcome, {user.name} 👋
-        </h1>
-        <button
-          onClick={handleLogout}
-          className="btn-primary px-4 py-2"
-        >
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white shadow-md p-6 space-y-6">
+        <h2 className="text-xl font-bold text-blue-600">Learner Dashboard</h2>
+        <nav className="space-y-3">
+          <button
+            onClick={() => setActiveTab("profile")}
+            className={`w-full text-left px-3 py-2 rounded-md ${
+              activeTab === "profile"
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            Profile
+          </button>
+          <button
+            onClick={() => setActiveTab("projects")}
+            className={`w-full text-left px-3 py-2 rounded-md ${
+              activeTab === "projects"
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            Projects
+          </button>
+        </nav>
+        <button onClick={handleLogout} className="btn-primary w-full mt-6">
           Logout
         </button>
-      </div>
+      </aside>
 
-      {/* Profile Overview */}
-      <div className="card mb-6">
-        <h2 className="text-xl font-semibold mb-4">Profile Overview</h2>
-        <p><span className="font-semibold">Email:</span> {user.email}</p>
-        <p><span className="font-semibold">Education:</span> {user.learnerProfile?.education || "Not provided"}</p>
-        <p><span className="font-semibold">Skills:</span> {user.learnerProfile?.skills?.join(", ") || "Not provided"}</p>
-        <p><span className="font-semibold">Portfolio:</span> {user.learnerProfile?.portfolio || "Not provided"}</p>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 p-10">
+        {activeTab === "profile" && (
+          <div className="card max-w-2xl mx-auto">
+            {!isEditing ? (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-6">
+                    <div className="w-20 h-20 rounded-full bg-blue-200 flex items-center justify-center text-2xl font-bold text-blue-700">
+                      {user.name[0]}
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold">{user.name}</h1>
+                      <p className="text-gray-600">{user.email}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="btn-secondary"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <p>
+                  <span className="font-semibold">Education:</span>{" "}
+                  {user.learnerProfile?.education || "Not provided"}
+                </p>
+                <p>
+                  <span className="font-semibold">Skills:</span>{" "}
+                  {user.learnerProfile?.skills?.join(", ") || "Not provided"}
+                </p>
+                <p>
+                  <span className="font-semibold">Portfolio:</span>{" "}
+                  {user.learnerProfile?.portfolio ? (
+                    <a
+                      href={user.learnerProfile.portfolio}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      {user.learnerProfile.portfolio}
+                    </a>
+                  ) : (
+                    "Not provided"
+                  )}
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md"
+                    placeholder="Full Name"
+                  />
+                  <input
+                    type="text"
+                    name="education"
+                    value={formData.learnerProfile?.education || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md"
+                    placeholder="Education"
+                  />
+                  <input
+                    type="text"
+                    name="skills"
+                    value={formData.learnerProfile?.skills?.join(", ") || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md"
+                    placeholder="Skills (comma separated)"
+                  />
+                  <input
+                    type="text"
+                    name="portfolio"
+                    value={formData.learnerProfile?.portfolio || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-md"
+                    placeholder="Portfolio / GitHub link"
+                  />
+                </div>
+                <div className="flex space-x-4 mt-6">
+                  <button onClick={handleSave} className="btn-primary px-6">
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="btn-secondary px-6"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
-      {/* Placeholder Sections */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="card">
-          <h2 className="text-lg font-semibold mb-2">Projects</h2>
-          <p className="text-gray-600">Coming soon...</p>
-        </div>
-        <div className="card">
-          <h2 className="text-lg font-semibold mb-2">Progress & Badges</h2>
-          <p className="text-gray-600">Gamification section will go here.</p>
-        </div>
-        <div className="card md:col-span-2">
-          <h2 className="text-lg font-semibold mb-2">Leaderboard</h2>
-          <p className="text-gray-600">Leaderboard data will be displayed here.</p>
-        </div>
-      </div>
+        {activeTab === "projects" && (
+          <div className="card">
+            <h2 className="text-2xl font-semibold mb-6">Available Projects</h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Mock project cards */}
+              <div className="p-5 border rounded-lg bg-white shadow-sm hover:shadow-md transition">
+                <h3 className="font-semibold text-lg mb-2">
+                  React Dashboard for Startup
+                </h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  Required Skills: React, TailwindCSS
+                </p>
+                <button className="btn-secondary">Apply</button>
+              </div>
+              <div className="p-5 border rounded-lg bg-white shadow-sm hover:shadow-md transition">
+                <h3 className="font-semibold text-lg mb-2">
+                  Backend API with Node.js
+                </h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  Required Skills: Node.js, MongoDB
+                </p>
+                <button className="btn-secondary">Apply</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }
