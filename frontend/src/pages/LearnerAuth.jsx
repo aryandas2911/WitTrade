@@ -18,14 +18,13 @@ function LearnerAuth() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       if (isSignup) {
         const res = await axios.post("http://localhost:5000/api/auth/register", {
           name: formData.name,
           email: formData.email,
           password: formData.password,
-          role: "learner", // fixed role
+          role: "learner",
           learnerProfile: {
             education: formData.education,
             skills: formData.skills
@@ -43,7 +42,6 @@ function LearnerAuth() {
         });
         alert("✅ Learner signed in!");
         console.log(res.data);
-
         localStorage.setItem("token", res.data.token);
       }
     } catch (err) {
@@ -52,21 +50,25 @@ function LearnerAuth() {
     }
   };
 
+  const headerText = isSignup ? "Learner Registration" : "Welcome Back";
+  const descText = isSignup
+    ? "Join WitTrade as a learner and access real-world startup projects."
+    : "Sign in to manage your profile and applications.";
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
-      {/* Auth Box */}
+    <div className="flex justify-center items-start min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 px-4 pt-10">
       <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 relative overflow-hidden">
         {/* Header */}
-        <h2 className="text-2xl font-bold text-blue-600 text-center mb-6">
-          {isSignup ? "Learner Sign Up" : "Learner Sign In"}
+        <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-2">
+          {headerText}
         </h2>
+        <p className="text-gray-600 text-center mb-6">{descText}</p>
 
-        {/* Forms wrapper with fixed height */}
-        <div className="relative" style={{ minHeight: "400px" }}>
+        {/* Forms container */}
+        <div className="relative" style={{ minHeight: "470px" }}>
           {/* Signup Form */}
           <form
             onSubmit={handleSubmit}
-            aria-hidden={!isSignup}
             className={`absolute inset-0 transition-all duration-300 ease-out ${
               isSignup
                 ? "opacity-100 translate-y-0 z-10"
@@ -137,11 +139,10 @@ function LearnerAuth() {
           {/* Signin Form */}
           <form
             onSubmit={handleSubmit}
-            aria-hidden={isSignup}
             className={`absolute inset-0 transition-all duration-300 ease-out ${
-              isSignup
-                ? "opacity-0 translate-y-4 z-0 pointer-events-none"
-                : "opacity-100 translate-y-0 z-10"
+              !isSignup
+                ? "opacity-100 translate-y-0 z-10"
+                : "opacity-0 translate-y-4 z-0 pointer-events-none"
             }`}
           >
             <div className="space-y-3">
