@@ -12,10 +12,10 @@ function Navbar() {
         <a href="/" className="text-gray-700 hover:text-blue-600 transition">
           Home
         </a>
-        <a href="#" className="text-gray-700 hover:text-blue-600 transition">
+        <a href="/startup-auth" className="text-gray-700 hover:text-blue-600 transition">
           Startup
         </a>
-        <a href="learner-auth" className="text-gray-700 hover:text-blue-600 transition">
+        <a href="/learner-auth" className="text-gray-700 hover:text-blue-600 transition">
           Learner
         </a>
         <a href="#" className="text-gray-700 hover:text-blue-600 transition">

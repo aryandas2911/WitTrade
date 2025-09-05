@@ -14,9 +14,9 @@ function Footer() {
         <div>
           <h3 className="text-md font-semibold text-gray-800 mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm text-gray-600">
-            <li><a href="#" className="hover:text-blue-600">Home</a></li>
-            <li><a href="#" className="hover:text-blue-600">Startups</a></li>
-            <li><a href="#" className="hover:text-blue-600">Learners</a></li>
+            <li><a href="/" className="hover:text-blue-600">Home</a></li>
+            <li><a href="/startup-auth" className="hover:text-blue-600">Startups</a></li>
+            <li><a href="/learner-auth" className="hover:text-blue-600">Learners</a></li>
             <li><a href="#" className="hover:text-blue-600">Applications</a></li>
           </ul>
         </div>

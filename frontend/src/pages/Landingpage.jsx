@@ -19,9 +19,11 @@ function Home() {
           </p>
 
           <div className="mt-6 flex gap-4">
-            <button className="btn-primary hover:cursor-pointer">
-              I’m a Startup
-            </button>
+            <Link to="/startup-auth">
+              <button className="btn-primary hover:cursor-pointer">
+                I’m a Startup
+              </button>
+            </Link>
             <Link to="/learner-auth">
               <button className="btn-secondary hover:cursor-pointer">
                 I’m a Learner
