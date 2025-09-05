@@ -36,25 +36,18 @@ function LearnerAuth() {
             portfolio: formData.portfolio,
           },
         });
+
         alert("✅ Learner signed up!");
-        console.log(res.data);
-
-        // ✅ Save token after signup
         localStorage.setItem("token", res.data.token);
-        console.log("Redirecting to dashboard...");
-
         navigate("/dashboard");
       } else {
         const res = await axios.post("http://localhost:5000/api/auth/login", {
           email: formData.email,
           password: formData.password,
         });
-        alert("✅ Learner signed in!");
-        console.log(res.data);
 
-        // ✅ Save token after login
+        alert("✅ Learner signed in!");
         localStorage.setItem("token", res.data.token);
-        console.log("Redirecting to dashboard...");
         navigate("/dashboard");
       }
     } catch (err) {
@@ -69,16 +62,16 @@ function LearnerAuth() {
     : "Sign in to manage your profile and applications.";
 
   return (
-    <div className="flex justify-center items-start min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 px-4 pt-10">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 relative overflow-hidden">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 px-4 py-16">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-xl p-8 relative overflow-hidden">
         {/* Header */}
         <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center mb-2">
           {headerText}
         </h2>
-        <p className="text-gray-600 text-center mb-6">{descText}</p>
+        <p className="text-gray-600 text-center mb-8">{descText}</p>
 
-        {/* Forms container */}
-        <div className="relative" style={{ minHeight: "470px" }}>
+        {/* Forms Container */}
+        <div className="relative" style={{ minHeight: "460px" }}>
           {/* Signup Form */}
           <form
             onSubmit={handleSubmit}
@@ -88,14 +81,14 @@ function LearnerAuth() {
                 : "opacity-0 -translate-y-4 z-0 pointer-events-none"
             }`}
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               <input
                 type="text"
                 name="name"
                 placeholder="Full Name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
                 required
               />
               <input
@@ -104,7 +97,7 @@ function LearnerAuth() {
                 placeholder="Education"
                 value={formData.education}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="text"
@@ -112,7 +105,7 @@ function LearnerAuth() {
                 placeholder="Skills (comma separated)"
                 value={formData.skills}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="text"
@@ -120,7 +113,7 @@ function LearnerAuth() {
                 placeholder="Portfolio / GitHub link"
                 value={formData.portfolio}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="email"
@@ -128,7 +121,7 @@ function LearnerAuth() {
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
                 required
               />
               <input
@@ -137,12 +130,12 @@ function LearnerAuth() {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
                 required
               />
               <button
                 type="submit"
-                className="btn-primary w-full py-2.5 text-lg"
+                className="btn-primary w-full py-3 text-lg transition-transform hover:scale-105 cursor-pointer"
               >
                 Sign Up
               </button>
@@ -158,14 +151,14 @@ function LearnerAuth() {
                 : "opacity-0 translate-y-4 z-0 pointer-events-none"
             }`}
           >
-            <div className="space-y-3">
+            <div className="space-y-4">
               <input
                 type="email"
                 name="email"
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
                 required
               />
               <input
@@ -174,12 +167,12 @@ function LearnerAuth() {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full p-2.5 border rounded-md focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
                 required
               />
               <button
                 type="submit"
-                className="btn-primary w-full py-2.5 text-lg"
+                className="btn-primary w-full py-3 text-lg transition-transform hover:scale-105 cursor-pointer"
               >
                 Sign In
               </button>
@@ -188,7 +181,7 @@ function LearnerAuth() {
         </div>
 
         {/* Toggle */}
-        <p className="text-sm text-gray-600 text-center mt-6">
+        <p className="text-sm text-gray-600 text-center mt-8">
           {isSignup ? (
             <>
               Already have an account?{" "}

@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+  FaUserTie,
+  FaFolderPlus,
+  FaUsers,
+  FaSignOutAlt,
+  FaIndustry,
+  FaUsersCog,
+  FaGlobe,
+  FaBuilding,
+} from "react-icons/fa";
 
 function StartupDashboard() {
   const [user, setUser] = useState(null);
@@ -23,16 +33,15 @@ function StartupDashboard() {
 
     const fetchProfileAndProjects = async () => {
       try {
-        // ✅ fetch startup profile
         const res = await axios.get("http://localhost:5000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data.user);
 
-        // ✅ fetch projects created by this startup
-        const projRes = await axios.get("http://localhost:5000/api/projects/mine", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const projRes = await axios.get(
+          "http://localhost:5000/api/projects/mine",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
         setProjects(projRes.data);
       } catch (err) {
         console.error("Profile or projects fetch failed:", err);
@@ -62,7 +71,6 @@ function StartupDashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      // ✅ only send project fields, company info is added in backend
       const res = await axios.post(
         "http://localhost:5000/api/projects",
         {
@@ -75,7 +83,7 @@ function StartupDashboard() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setProjects([...projects, res.data]); // ✅ backend returns project with companyName
+      setProjects([...projects, res.data]);
       setNewProject({ title: "", description: "", requiredSkills: "" });
       alert("✅ Project added successfully!");
     } catch (err) {
@@ -87,86 +95,95 @@ function StartupDashboard() {
   if (!user) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <p className="text-gray-600 text-lg">Loading dashboard...</p>
+        <p className="text-gray-600 text-lg animate-pulse">
+          Loading dashboard...
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside
-        className="w-64 text-white p-6 flex flex-col justify-between shadow-lg"
-        style={{ backgroundColor: "var(--primary-dark)" }}
-      >
-        <div>
-          <h2 className="text-2xl font-bold mb-10 text-white">WitTrade 🚀</h2>
-          <nav className="space-y-3">
-            {["profile", "projects", "applicants"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`w-full text-left px-4 py-2 rounded-md transition ${
-                  activeTab === tab
-                    ? "text-black font-semibold"
-                    : "hover:opacity-90"
-                }`}
-                style={{
-                  backgroundColor:
-                    activeTab === tab
-                      ? "var(--secondary-color)"
-                      : "transparent",
-                }}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </nav>
-        </div>
-        <button onClick={handleLogout} className="btn-secondary w-full py-2">
-          Logout
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Top Navigation */}
+      <header className="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
+        <h2 className="text-xl font-bold text-blue-600">Startup Dashboard</h2>
+        <nav className="flex space-x-3 bg-gray-100 rounded-full px-3 py-1">
+          {[
+            { key: "profile", label: "Profile", icon: <FaUserTie /> },
+            { key: "projects", label: "Projects", icon: <FaFolderPlus /> },
+            { key: "applicants", label: "Applicants", icon: <FaUsers /> },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 cursor-pointer ${
+                activeTab === tab.key
+                  ? "bg-blue-600 text-white font-semibold shadow-md"
+                  : "text-gray-600 hover:bg-white hover:shadow-sm hover:scale-105"
+              }`}
+            >
+              {tab.icon}
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 text-red-600 hover:text-red-700 transition font-semibold cursor-pointer"
+        >
+          <FaSignOutAlt /> Logout
         </button>
-      </aside>
+      </header>
 
       {/* Main Content */}
-      <main className="flex-1 bg-[var(--background)] p-10 overflow-y-auto">
+      <main className="flex-1 p-8">
         {/* Profile Tab */}
         {activeTab === "profile" && (
-          <div className="card max-w-3xl mx-auto">
-            <h2 className="text-2xl font-bold mb-6 text-[var(--primary-color)] border-b pb-3">
-              Company Profile
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <ProfileItem
-                label="Company"
-                value={user.startupProfile?.companyName}
-              />
-              <ProfileItem
-                label="Founder"
-                value={user.startupProfile?.founderName}
-              />
-              <ProfileItem
-                label="Industry"
-                value={user.startupProfile?.industry}
-              />
-              <ProfileItem
-                label="Company Size"
-                value={user.startupProfile?.companySize}
-              />
-              <div className="col-span-2">
-                <span className="font-semibold">Website:</span>{" "}
-                {user.startupProfile?.website ? (
-                  <a
-                    href={user.startupProfile.website}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[var(--primary-color)] underline"
-                  >
-                    {user.startupProfile.website}
-                  </a>
-                ) : (
-                  "Not provided"
-                )}
+          <div className="relative animate-fadeIn">
+            {/* Banner */}
+            <div className="h-40 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-t-xl"></div>
+
+            {/* Profile Card */}
+            <div className="card max-w-3xl mx-auto -mt-20 relative p-8 shadow-lg rounded-xl bg-white">
+              <div className="flex items-center space-x-6">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-400 to-indigo-500 flex items-center justify-center text-3xl font-bold text-white shadow-md">
+                  {user.startupProfile?.companyName?.[0] || "S"}
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold">
+                    {user.startupProfile?.companyName}
+                  </h1>
+                  <p className="text-gray-600">Founder: {user.startupProfile?.founderName}</p>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                <p className="flex items-center gap-2">
+                  <FaIndustry className="text-blue-500" />
+                  <span className="font-semibold">Industry:</span>{" "}
+                  {user.startupProfile?.industry || "Not provided"}
+                </p>
+                <p className="flex items-center gap-2">
+                  <FaUsersCog className="text-blue-500" />
+                  <span className="font-semibold">Company Size:</span>{" "}
+                  {user.startupProfile?.companySize || "Not provided"}
+                </p>
+                <p className="flex items-center gap-2">
+                  <FaGlobe className="text-blue-500" />
+                  <span className="font-semibold">Website:</span>{" "}
+                  {user.startupProfile?.website ? (
+                    <a
+                      href={user.startupProfile.website}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-blue-600 underline hover:opacity-80 transition cursor-pointer"
+                    >
+                      {user.startupProfile.website}
+                    </a>
+                  ) : (
+                    "Not provided"
+                  )}
+                </p>
               </div>
             </div>
           </div>
@@ -174,7 +191,7 @@ function StartupDashboard() {
 
         {/* Projects Tab */}
         {activeTab === "projects" && (
-          <div className="space-y-6">
+          <div className="space-y-6 animate-fadeIn">
             {/* Add Project Form */}
             <div className="card">
               <h2 className="text-xl font-bold mb-4 text-[var(--primary-color)]">
@@ -204,7 +221,10 @@ function StartupDashboard() {
                   onChange={handleProjectChange}
                   className="w-full p-2 border rounded-md focus:ring-2 focus:ring-[var(--primary-color)]"
                 />
-                <button onClick={handleAddProject} className="btn-primary w-full">
+                <button
+                  onClick={handleAddProject}
+                  className="btn-primary w-full cursor-pointer hover:scale-105 transition"
+                >
                   Add Project
                 </button>
               </div>
@@ -220,11 +240,11 @@ function StartupDashboard() {
                   No projects posted yet.
                 </p>
               ) : (
-                <ul className="space-y-4">
+                <ul className="grid md:grid-cols-2 gap-6">
                   {projects.map((proj) => (
                     <li
                       key={proj._id}
-                      className="p-4 border rounded-md bg-white shadow-sm hover:shadow-md transition"
+                      className="p-4 border rounded-md bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition cursor-pointer"
                     >
                       <h4 className="font-semibold text-lg">{proj.title}</h4>
                       <p className="text-[var(--text-light)]">
@@ -246,7 +266,7 @@ function StartupDashboard() {
 
         {/* Applicants Tab */}
         {activeTab === "applicants" && (
-          <div className="card">
+          <div className="card animate-fadeIn">
             <h2 className="text-2xl font-bold mb-6 text-[var(--primary-color)]">
               Applicants
             </h2>
@@ -256,7 +276,7 @@ function StartupDashboard() {
               projects.map((proj) => (
                 <div
                   key={proj._id}
-                  className="mb-6 p-4 border rounded-lg bg-white shadow-sm"
+                  className="mb-6 p-4 border rounded-lg bg-white shadow-sm hover:shadow-md transition"
                 >
                   <h3 className="font-semibold text-lg mb-2">{proj.title}</h3>
                   {proj.applicants?.length === 0 ? (
@@ -266,10 +286,12 @@ function StartupDashboard() {
                       {proj.applicants.map((app) => (
                         <li
                           key={app.learnerId}
-                          className="p-2 border rounded-md bg-gray-50"
+                          className="p-2 border rounded-md bg-gray-50 hover:shadow-sm transition cursor-pointer"
                         >
                           <p className="font-semibold">{app.learnerName}</p>
-                          <p className="text-sm text-gray-600">{app.learnerEmail}</p>
+                          <p className="text-sm text-gray-600">
+                            {app.learnerEmail}
+                          </p>
                           <p className="text-xs text-gray-400">
                             Applied at{" "}
                             {new Date(app.appliedAt).toLocaleDateString()}
@@ -285,15 +307,6 @@ function StartupDashboard() {
         )}
       </main>
     </div>
-  );
-}
-
-function ProfileItem({ label, value }) {
-  return (
-    <p>
-      <span className="font-semibold">{label}:</span>{" "}
-      {value || "Not provided"}
-    </p>
   );
 }
 
