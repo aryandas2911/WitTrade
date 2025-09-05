@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { RiDeleteBin5Line } from "react-icons/ri";
 
 function LearnerDashboard() {
   const [user, setUser] = useState(null);
@@ -335,7 +336,7 @@ function LearnerDashboard() {
                       onClick={() => handleWithdraw(proj._id)}
                       className="btn-secondary"
                     >
-                      Withdraw
+                      <RiDeleteBin5Line />
                     </button>
                   </div>
                 ))}
