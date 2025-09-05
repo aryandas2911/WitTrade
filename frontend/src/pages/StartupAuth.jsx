@@ -30,8 +30,8 @@ function StartupAuth() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 px-4">
-      <div className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8">
+    <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gradient-to-br from-blue-50 to-gray-100 px-4 pt-10">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
         {/* Header */}
         <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 text-center">
           {isSignup ? "Startup Registration" : "Welcome Back"}
@@ -42,28 +42,24 @@ function StartupAuth() {
             : "Sign in to manage your dashboard and projects."}
         </p>
 
-        {/* Transition wrapper */}
-        <div
-          key={isSignup ? "signup" : "signin"}
-          className="transition-all duration-500 ease-out transform opacity-0 animate-[fadeInUp_0.4s_ease-out_forwards]"
-        >
+        {/* Fixed height container for forms */}
+        <div className="relative min-h-[420px]">
           <style>
             {`
               @keyframes fadeInUp {
-                from {
-                  opacity: 0;
-                  transform: translateY(12px);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateY(0);
-                }
+                from { opacity: 0; transform: translateY(12px); }
+                to { opacity: 1; transform: translateY(0); }
               }
+              .fade-in-up { animation: fadeInUp 0.35s ease-out forwards; }
             `}
           </style>
 
-          {isSignup ? (
-            <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Signup Form */}
+          {isSignup && (
+            <form
+              onSubmit={handleSubmit}
+              className="absolute inset-0 space-y-3 fade-in-up"
+            >
               <input
                 type="text"
                 name="companyName"
@@ -126,8 +122,14 @@ function StartupAuth() {
                 Register Startup
               </button>
             </form>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-3">
+          )}
+
+          {/* Signin Form */}
+          {!isSignup && (
+            <form
+              onSubmit={handleSubmit}
+              className="absolute inset-0 space-y-3 fade-in-up"
+            >
               <input
                 type="email"
                 name="email"

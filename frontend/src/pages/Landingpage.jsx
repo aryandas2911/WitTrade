@@ -139,7 +139,9 @@ function Home() {
           Join WitTrade today and unlock growth for both startups and learners.
         </p>
         <div className="mt-6 flex justify-center gap-4">
-          <button className="btn-secondary">Post a Project</button>
+          <Link to="/startup-auth">
+            <button className="btn-secondary">Post a Project</button>
+          </Link>
           <Link to="/learner-auth">
             <button className="btn-primary">Join as Learner</button>
           </Link>
