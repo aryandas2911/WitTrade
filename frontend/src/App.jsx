@@ -5,20 +5,22 @@ import Home from "./pages/Landingpage";
 import LearnerAuth from "./pages/LearnerAuth";
 import StartupAuth from "./pages/StartupAuth";
 import About from "./pages/About";
+import LearnerDashboard from "./pages/LearnerDashboard";
 
 function App() {
   return (
     <>
-      <Navbar />
       <Router>
+      <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/learner-auth" element={<LearnerAuth />} />
           <Route path="/startup-auth" element={<StartupAuth />} />
           <Route path="/about" element={<About/>} />
+          <Route path="/dashboard" element={<LearnerDashboard />} />
         </Routes>
-      </Router>
       <Footer/>
+      </Router>
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function LearnerAuth() {
   const [isSignup, setIsSignup] = useState(true);
@@ -11,6 +12,8 @@ function LearnerAuth() {
     skills: "",
     portfolio: "",
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,6 +38,12 @@ function LearnerAuth() {
         });
         alert("✅ Learner signed up!");
         console.log(res.data);
+
+        // ✅ Save token after signup
+        localStorage.setItem("token", res.data.token);
+        console.log("Redirecting to dashboard...");
+
+        navigate("/dashboard");
       } else {
         const res = await axios.post("http://localhost:5000/api/auth/login", {
           email: formData.email,
@@ -42,7 +51,11 @@ function LearnerAuth() {
         });
         alert("✅ Learner signed in!");
         console.log(res.data);
+
+        // ✅ Save token after login
         localStorage.setItem("token", res.data.token);
+        console.log("Redirecting to dashboard...");
+        navigate("/dashboard");
       }
     } catch (err) {
       console.error(err.response?.data || err.message);
