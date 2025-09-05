@@ -6,7 +6,8 @@ import express from "express";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import profileRoutes from "./routes/profileRoutes.js"; // ✅ import profile routes
+import profileRoutes from "./routes/profileRoutes.js";
+import projectRoutes from "./routes/projectRoutes.js";
 
 connectDB();
 
@@ -24,7 +25,8 @@ app.use(express.json());
 // ✅ Mount routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
-app.use("/api/users", profileRoutes); // now available at /api/users/profile
+app.use("/api/users", profileRoutes);
+app.use("/api/projects", projectRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 WitTrade Backend is running");

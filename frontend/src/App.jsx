@@ -6,6 +6,7 @@ import LearnerAuth from "./pages/LearnerAuth";
 import StartupAuth from "./pages/StartupAuth";
 import About from "./pages/About";
 import LearnerDashboard from "./pages/LearnerDashboard";
+import StartupDashboard from "./pages/StarterDashboard";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/startup-auth" element={<StartupAuth />} />
           <Route path="/about" element={<About/>} />
           <Route path="/dashboard" element={<LearnerDashboard />} />
+          <Route path="/startup-dashboard" element={<StartupDashboard />} />
         </Routes>
       <Footer/>
       </Router>

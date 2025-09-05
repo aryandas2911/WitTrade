@@ -7,38 +7,54 @@ function LearnerDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});
+  const [projects, setProjects] = useState([]); // matching projects
+  const [appliedProjects, setAppliedProjects] = useState([]); // ongoing projects
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       navigate("/learner-auth");
       return;
     }
 
-    const fetchProfile = async () => {
+    const fetchData = async () => {
       try {
+        // ✅ fetch learner profile
         const res = await axios.get("http://localhost:5000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data.user);
-        setFormData(res.data.user); // preload form
+        setFormData(res.data.user);
+
+        // ✅ fetch matching projects
+        const projRes = await axios.get("http://localhost:5000/api/projects/match", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setProjects(projRes.data);
+
+        // ✅ fetch learner’s applied projects
+        const appliedRes = await axios.get("http://localhost:5000/api/projects/applied/mine", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAppliedProjects(appliedRes.data);
       } catch (err) {
-        console.error("Profile fetch failed:", err);
+        console.error("Profile/projects fetch failed:", err);
         localStorage.removeItem("token");
         navigate("/learner-auth");
       }
     };
 
-    fetchProfile();
+    fetchData();
   }, [navigate]);
 
+  // ✅ Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
 
+  // ✅ Profile edit handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === "skills") {
@@ -73,9 +89,7 @@ function LearnerDashboard() {
           skills: formData.learnerProfile?.skills,
           portfolio: formData.learnerProfile?.portfolio,
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setUser(res.data.user);
@@ -84,6 +98,48 @@ function LearnerDashboard() {
     } catch (err) {
       console.error(err);
       alert("❌ Failed to update profile");
+    }
+  };
+
+  // ✅ Apply to project
+  const handleApply = async (projectId) => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post(
+        `http://localhost:5000/api/projects/${projectId}/apply`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("✅ Applied successfully!");
+
+      // refresh applied projects
+      const appliedRes = await axios.get("http://localhost:5000/api/projects/applied/mine", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAppliedProjects(appliedRes.data);
+    } catch (err) {
+      alert(err.response?.data?.message || "❌ Failed to apply");
+    }
+  };
+
+  // ✅ Withdraw from project
+  const handleWithdraw = async (projectId) => {
+    const token = localStorage.getItem("token");
+    try {
+      await axios.post(
+        `http://localhost:5000/api/projects/${projectId}/withdraw`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("✅ Withdrawn successfully!");
+
+      // refresh applied projects
+      const appliedRes = await axios.get("http://localhost:5000/api/projects/applied/mine", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setAppliedProjects(appliedRes.data);
+    } catch (err) {
+      alert(err.response?.data?.message || "❌ Failed to withdraw");
     }
   };
 
@@ -101,26 +157,19 @@ function LearnerDashboard() {
       <aside className="w-64 bg-white shadow-md p-6 space-y-6">
         <h2 className="text-xl font-bold text-blue-600">Learner Dashboard</h2>
         <nav className="space-y-3">
-          <button
-            onClick={() => setActiveTab("profile")}
-            className={`w-full text-left px-3 py-2 rounded-md ${
-              activeTab === "profile"
-                ? "bg-blue-100 text-blue-700 font-semibold"
-                : "hover:bg-gray-100"
-            }`}
-          >
-            Profile
-          </button>
-          <button
-            onClick={() => setActiveTab("projects")}
-            className={`w-full text-left px-3 py-2 rounded-md ${
-              activeTab === "projects"
-                ? "bg-blue-100 text-blue-700 font-semibold"
-                : "hover:bg-gray-100"
-            }`}
-          >
-            Projects
-          </button>
+          {["profile", "projects", "ongoing"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`w-full text-left px-3 py-2 rounded-md ${
+                activeTab === tab
+                  ? "bg-blue-100 text-blue-700 font-semibold"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </nav>
         <button onClick={handleLogout} className="btn-primary w-full mt-6">
           Logout
@@ -129,6 +178,7 @@ function LearnerDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 p-10">
+        {/* Profile Tab */}
         {activeTab === "profile" && (
           <div className="card max-w-2xl mx-auto">
             {!isEditing ? (
@@ -227,30 +277,70 @@ function LearnerDashboard() {
           </div>
         )}
 
+        {/* Projects Tab */}
         {activeTab === "projects" && (
           <div className="card">
-            <h2 className="text-2xl font-semibold mb-6">Available Projects</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Mock project cards */}
-              <div className="p-5 border rounded-lg bg-white shadow-sm hover:shadow-md transition">
-                <h3 className="font-semibold text-lg mb-2">
-                  React Dashboard for Startup
-                </h3>
-                <p className="text-gray-600 text-sm mb-3">
-                  Required Skills: React, TailwindCSS
-                </p>
-                <button className="btn-secondary">Apply</button>
+            <h2 className="text-2xl font-semibold mb-6">Matching Projects</h2>
+            {projects.length === 0 ? (
+              <p className="text-gray-600">No matching projects found yet.</p>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-6">
+                {projects.map((proj) => (
+                  <div
+                    key={proj._id}
+                    className="p-5 border rounded-lg bg-white shadow-sm hover:shadow-md transition"
+                  >
+                    <h3 className="font-semibold text-lg mb-2">{proj.title}</h3>
+                    <p className="text-gray-600 text-sm mb-3">
+                      {proj.description}
+                    </p>
+                    <p className="text-sm text-gray-500 mb-3">
+                      Skills: {proj.requiredSkills.join(", ")}
+                    </p>
+                    <p className="text-xs text-gray-400 mb-3">
+                      Posted by: <strong>{proj.companyName}</strong>
+                    </p>
+                    <button
+                      onClick={() => handleApply(proj._id)}
+                      className="btn-secondary"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                ))}
               </div>
-              <div className="p-5 border rounded-lg bg-white shadow-sm hover:shadow-md transition">
-                <h3 className="font-semibold text-lg mb-2">
-                  Backend API with Node.js
-                </h3>
-                <p className="text-gray-600 text-sm mb-3">
-                  Required Skills: Node.js, MongoDB
-                </p>
-                <button className="btn-secondary">Apply</button>
+            )}
+          </div>
+        )}
+
+        {/* Ongoing Projects Tab */}
+        {activeTab === "ongoing" && (
+          <div className="card">
+            <h2 className="text-2xl font-semibold mb-6">Ongoing Projects</h2>
+            {appliedProjects.length === 0 ? (
+              <p className="text-gray-600">You have not applied to any projects yet.</p>
+            ) : (
+              <div className="grid md:grid-cols-2 gap-6">
+                {appliedProjects.map((proj) => (
+                  <div
+                    key={proj._id}
+                    className="p-5 border rounded-lg bg-white shadow-sm"
+                  >
+                    <h3 className="font-semibold text-lg mb-2">{proj.title}</h3>
+                    <p className="text-gray-600 text-sm mb-3">{proj.description}</p>
+                    <p className="text-sm text-gray-500 mb-3">
+                      Company: {proj.companyName}
+                    </p>
+                    <button
+                      onClick={() => handleWithdraw(proj._id)}
+                      className="btn-secondary"
+                    >
+                      Withdraw
+                    </button>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </div>
         )}
       </main>

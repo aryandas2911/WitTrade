@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ import navigate
 
 function StartupAuth() {
   const [isSignup, setIsSignup] = useState(true);
@@ -12,6 +13,8 @@ function StartupAuth() {
     companySize: "",
     website: "",
   });
+
+  const navigate = useNavigate(); // ✅ hook
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,16 +37,21 @@ function StartupAuth() {
             website: formData.website,
           },
         });
+
+        localStorage.setItem("token", res.data.token); // ✅ save token
         alert("✅ Startup signed up!");
         console.log(res.data);
+        navigate("/startup-dashboard"); // ✅ redirect after signup
       } else {
         const res = await axios.post("http://localhost:5000/api/auth/login", {
           email: formData.email,
           password: formData.password,
         });
+
+        localStorage.setItem("token", res.data.token); // ✅ save token
         alert("✅ Startup signed in!");
         console.log(res.data);
-        localStorage.setItem("token", res.data.token);
+        navigate("/startup-dashboard"); // ✅ redirect after login
       }
     } catch (err) {
       console.error(err.response?.data || err.message);
