@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaSearch, FaBuilding, FaCode } from "react-icons/fa";
-import api from "../api";
 
 function ExploreProjects() {
   const [projects, setProjects] = useState([]);
@@ -22,8 +21,8 @@ function ExploreProjects() {
         )
       ).toString();
 
-      const res = await api.get(
-        `/api/projects/all?${query}`
+      const res = await axios.get(
+        `http://localhost:5000/api/projects/all?${query}`
       );
       setProjects(res.data);
     } catch (err) {
