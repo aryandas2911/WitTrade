@@ -15,9 +15,12 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://wittrade.netlify.app"],
-    credentials: true,
+    origin: [
+      "http://localhost:5173",
+      "https://wittrade.netlify.app"
+    ],
     methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
