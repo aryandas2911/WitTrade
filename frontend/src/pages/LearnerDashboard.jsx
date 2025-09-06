@@ -31,20 +31,20 @@ function LearnerDashboard() {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users/profile", {
+        const res = await axios.get(`${API}/api/users/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data.user);
         setFormData(res.data.user);
 
         const projRes = await axios.get(
-          "http://localhost:5000/api/projects/match",
+          `${API}/api/projects/match`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setProjects(projRes.data);
 
         const appliedRes = await axios.get(
-          "http://localhost:5000/api/projects/applied/mine",
+          `${API}/api/projects/applied/mine`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setAppliedProjects(appliedRes.data);
@@ -90,7 +90,7 @@ function LearnerDashboard() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        "http://localhost:5000/api/users/profile",
+        "${API}/api/users/profile",
         {
           name: formData.name,
           education: formData.learnerProfile?.education,
@@ -113,14 +113,14 @@ function LearnerDashboard() {
     const token = localStorage.getItem("token");
     try {
       await axios.post(
-        `http://localhost:5000/api/projects/${projectId}/apply`,
+        `${API}/api/projects/${projectId}/apply`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("✅ Applied successfully!");
 
       const appliedRes = await axios.get(
-        "http://localhost:5000/api/projects/applied/mine",
+        "${API}/api/projects/applied/mine",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAppliedProjects(appliedRes.data);
@@ -133,14 +133,14 @@ function LearnerDashboard() {
     const token = localStorage.getItem("token");
     try {
       await axios.post(
-        `http://localhost:5000/api/projects/${projectId}/withdraw`,
+        `${API}/api/projects/${projectId}/withdraw`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("✅ Withdrawn successfully!");
 
       const appliedRes = await axios.get(
-        "http://localhost:5000/api/projects/applied/mine",
+        "${API}/api/projects/applied/mine",
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setAppliedProjects(appliedRes.data);

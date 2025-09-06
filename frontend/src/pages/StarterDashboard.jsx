@@ -12,6 +12,8 @@ import {
   FaBuilding,
 } from "react-icons/fa";
 
+const API = import.meta.env.VITE_API_URL;
+
 function StartupDashboard() {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("profile");
@@ -33,13 +35,13 @@ function StartupDashboard() {
 
     const fetchProfileAndProjects = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users/profile", {
+        const res = await axios.get(`${API}/api/users/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data.user);
 
         const projRes = await axios.get(
-          "http://localhost:5000/api/projects/mine",
+          `${API}/api/projects/mine`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setProjects(projRes.data);
@@ -72,7 +74,7 @@ function StartupDashboard() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/projects",
+        `${API}/api/projects`,
         {
           title: newProject.title,
           description: newProject.description,
