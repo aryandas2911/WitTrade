@@ -5,7 +5,7 @@ function Navbar() {
     <nav className="w-full bg-white shadow-md px-6 py-3 flex items-center justify-between">
       {/* Logo */}
       <a href="/" className="flex items-center gap-2 hover:opacity-90 transition">
-        <img src={"Logo.png"} alt="WitTrade Logo" className="h-8 w-8" />
+        <img src="Logo.png" alt="WitTrade Logo" className="h-8 w-8" />
         <span className="text-xl font-extrabold text-[var(--primary-color)]">
           WitTrade
         </span>
